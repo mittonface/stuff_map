@@ -4,7 +4,7 @@ from django.conf import settings
 from .models import Location
 from django.http import HttpResponse
 
-def index(request):
+def display(request):
 
     c = {"api_key": settings.MAPS_API_KEY}
     t = "stuff_map/index.html"
