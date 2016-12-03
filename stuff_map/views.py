@@ -11,6 +11,12 @@ def display(request):
 
     return render(request, t, c)
 
+def manage(request):
+    c = {"api_key": settings.MAPS_API_KEY}
+    t = "stuff_map/manage.html"
+
+    return render(request, t, c)
+
 
 def sample_json(request):
 

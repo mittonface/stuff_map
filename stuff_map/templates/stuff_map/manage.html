@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+         * element that contains the map. */
+        #map {
+            height: 50%;
+        }
+        /* Optional: Makes the sample page fill the window. */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+</head>
+<body>
+<h1>Manage Trip</h1>
+<a href="/admin/stuff_map/item/">Manage Items</a>
+
+<div id="map"></div>
+<script>
+    function initMap() {
+
+        // get all of the information needed
+        $.ajax("http://localhost:8000/sample/", {
+            success: function(data) {
+                start_route(data);
+            },
+            error: function(){
+                // probably do something
+            }
+        });
+    }
+
+
+    function start_route(route){
+        var directionsService = new google.maps.DirectionsService;
+        var directionsDisplay = new google.maps.DirectionsRenderer;
+        var stepDisplay = new google.maps.InfoWindow;
+
+        markerArray = [];
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: parseFloat(route.home.latitude), lng: parseFloat(route.home.longitude)},
+            zoom: 8
+        });
+
+        directionsDisplay.setMap(map);
+
+        // plot the current route
+        directionsService.route({
+            origin: {lat: parseFloat(route.home.latitude), lng: parseFloat(route.home.longitude)},
+            destination: {
+                lat: parseFloat(route.locations[route.locations.length-1].latitude),
+                lng: parseFloat(route.locations[route.locations.length-1].longitude)
+            },
+            travelMode: "DRIVING"
+        }, function(response, status) {
+            directionsDisplay.setDirections(response);
+            showSteps(response, markerArray, stepDisplay, map, route);
+        });
+
+
+        // management stuff
+
+        google.maps.event.addListener(map, 'click', function(event) {
+            placeMarker(event.latLng);
+        });
+    }
+
+
+    function placeMarker(location) {
+        var marker = new google.maps.Marker({
+            position: location,
+            map: map
+        });
+    }
+
+    function showSteps(directionResult, markerArray, stepDisplay, map, route) {
+
+        // For each step, place a marker, and add the text to the marker's infowindow.
+        // Also attach the marker to an array so we can keep track of it and remove it
+        // when calculating new routes.
+        for (var i = 0; i < route.locations.length; i++) {
+            var marker = markerArray[i] = markerArray[i] || new google.maps.Marker;
+            marker.setMap(map);
+            marker.setPosition({
+                lat: parseFloat(route.locations[i].latitude),
+                lng: parseFloat(route.locations[i].longitude)
+            });
+        }
+    }
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initMap"
+        async defer></script>
+</body>
+</html>

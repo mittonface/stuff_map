@@ -20,5 +20,6 @@ from .views import *
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^display/', display, name='display'),
-    url(r'^sample/', sample_json, name='sample_json')
+    url(r'^sample/', sample_json, name='sample_json'),
+    url(r'^manage/', manage, name='manage')
 ]
