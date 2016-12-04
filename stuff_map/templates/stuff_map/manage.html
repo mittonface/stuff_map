@@ -63,6 +63,14 @@
         }, function(response, status) {
             directionsDisplay.setDirections(response);
             showSteps(response, markerArray, stepDisplay, map, route);
+
+            $.ajax({
+                url: "http://localhost:8000/handle/",
+                method: "POST",
+                data: JSON.stringify(response)
+
+            });
+
         });
 
 
@@ -99,5 +107,7 @@
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initMap"
         async defer></script>
+
+<span id="thing">Hi</span>
 </body>
 </html>

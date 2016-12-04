@@ -1,8 +1,11 @@
 import json
+import pprint
 from django.shortcuts import render
 from django.conf import settings
 from .models import Location
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 
 def display(request):
 
@@ -16,6 +19,20 @@ def manage(request):
     t = "stuff_map/manage.html"
 
     return render(request, t, c)
+
+
+@csrf_exempt
+def handle_route(request):
+    pp = pprint.PrettyPrinter(indent=2)
+
+    routes = json.loads(request.body)
+    route = routes['routes'][0]
+
+    pp.pprint(route)
+    # for steps in routes[0]["steps"]:
+    #     pp.pprint(steps)
+
+    return HttpResponse("Success")
 
 
 def sample_json(request):
